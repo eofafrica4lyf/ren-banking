@@ -6,7 +6,7 @@ import {
 import AuthButton from './AuthButton'
 import fakeAuth from '../helpers/fakeAuth'
 
-function Header() {
+function PublicHeader() {
 	return (
 		<nav class="header-navbar navbar-expand-md navbar navbar-with-menu navbar-without-dd-arrow fixed-top navbar-semi-light">
 			<div class="navbar-wrapper">
@@ -52,4 +52,4 @@ function Header() {
 	)
 }
 
-export default Header
+export default PublicHeader

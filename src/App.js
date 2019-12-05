@@ -10,9 +10,11 @@ import {
 
 import './App.css'
 import Footer from "./components/Footer"
-// import Header from "./components/Header"
+import PublicHeader from "./components/PublicHeader"
 import Sidebar from "./components/Sidebar"
 import Dashboard from "./components/pages/Dashboard"
+import Login from './components/pages/Login'
+import Register from './components/pages/Register'
 
 function App() {
 	return (
@@ -25,6 +27,9 @@ function App() {
 					</Route>
 					<Route path="/login">
 						<LoginPage />
+					</Route>
+					<Route path="/register">
+						<RegisterPage />
 					</Route>
 					<PrivateRoute exact path="/">
 						<nav class="header-navbar navbar-expand-md navbar navbar-with-menu navbar-without-dd-arrow fixed-top navbar-semi-light">
@@ -153,12 +158,38 @@ function LoginPage() {
 	};
 
 	return (
-		<div>
-			<p>You must log in to view the page at {from.pathname}</p>
-			<button onClick={login}>Log in</button>
-		</div>
+		<>
+			<div className="public-header">
+				<PublicHeader />
+				<Login />
+				<div>
+					<a href="/register">
+						<p>New to the App? Register</p>
+					</a>
+				</div>
+				<div>
+					<p>You must log in to view the page at {from.pathname}</p>
+					<button onClick={login}>Log in</button>
+				</div>
+			</div>
+		</>
 	);
 }
 
+function RegisterPage() {
+	return (
+		<>
+			<div className="public-header">
+				<PublicHeader />
+				<Register />
+				<div>
+					<a href="/login">
+						<p>Not new? Login</p>
+					</a>
+				</div>
+			</div>
+		</>
+	)
+}
 
 export default App
