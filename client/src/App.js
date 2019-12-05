@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useContext } from 'react'
 import {
 	BrowserRouter as Router,
 	Switch,
@@ -16,66 +16,88 @@ import Dashboard from "./components/pages/Dashboard"
 import Login from './components/pages/Login'
 import Register from './components/pages/Register'
 
+import AuthContextProvider from './context/authContext'
+import { authContext } from './context/authContext'
+
 function App() {
 	return (
 		<div className='App'>
 			<Router>
-
-				<Switch>
-					<Route path="/public">
-						<PublicPage />
-					</Route>
-					<Route path="/login">
-						<LoginPage />
-					</Route>
-					<Route path="/register">
-						<RegisterPage />
-					</Route>
-					<PrivateRoute exact path="/">
-						<nav class="header-navbar navbar-expand-md navbar navbar-with-menu navbar-without-dd-arrow fixed-top navbar-semi-light">
-							<div class="navbar-wrapper">
-								<div class="navbar-container content">
-									<div class="collapse navbar-collapse show" id="navbar-mobile">
-										<ul class="nav navbar-nav mr-auto float-left">
-											<li class="nav-item d-block d-md-none"><a class="nav-link nav-menu-main menu-toggle hidden-xs" href="/#"><i class="ft-menu"></i></a></li>
-											{/* <li class="nav-item d-none d-md-block"><a class="nav-link nav-link-expand" href="/#"><i class="ficon ft-maximize"></i></a></li>
-									<li class="nav-item dropdown navbar-search"><a class="nav-link dropdown-toggle hide" data-toggle="dropdown" href="/#"><i class="ficon ft-search"></i></a>
-										<ul class="dropdown-menu">
-											<li class="arrow_box">
-												<form>
-													<div class="input-group search-box">
-														<div class="position-relative has-icon-right full-width">
-															<input class="form-control" id="search" type="text" placeholder="Search here..." />
-															<div class="form-control-position navbar-search-close"><i class="ft-x">   </i></div>
-														</div>
+				<AuthContextProvider>
+					<Switch>
+						<Route exact path="/">
+							<LoginPage />
+						</Route>
+						<Route path="/public">
+							<PublicPage />
+						</Route>
+						<Route path="/login">
+							<LoginPage />
+						</Route>
+						<Route path="/register">
+							<RegisterPage />
+						</Route>
+						<PrivateRoute exact path="/dashboard">
+							<nav class="header-navbar navbar-expand-md navbar navbar-with-menu navbar-without-dd-arrow fixed-top navbar-semi-light">
+								<div class="navbar-wrapper">
+									<div class="navbar-container content">
+										<div class="collapse navbar-collapse show" id="navbar-mobile">
+											<ul class="nav navbar-nav mr-auto float-left">
+												<li class="nav-item d-block d-md-none"><a class="nav-link nav-menu-main menu-toggle hidden-xs" href="/#"><i class="ft-menu"></i></a></li>
+											</ul>
+											<ul class="nav navbar-nav float-right">
+											</ul>
+											<ul class="nav navbar-nav float-right">
+												<li class="dropdown dropdown-notification nav-item"><a class="nav-link nav-link-label" href="/#" data-toggle="dropdown"><i class="ficon ft-mail">             </i></a>
+													<div class="dropdown-menu dropdown-menu-right">
+														<div class="arrow_box_right"><a class="dropdown-item" href="/#"><i class="ft-book"></i> Read Mail</a><a class="dropdown-item" href="/#"><i class="ft-bookmark"></i> Read Later</a><a class="dropdown-item" href="/#"><i class="ft-check-square"></i> Mark all Read       </a></div>
 													</div>
-												</form>
-											</li>
-										</ul>
-									</li> */}
-										</ul>
-										<ul class="nav navbar-nav float-right">
-										</ul>
-										<ul class="nav navbar-nav float-right">
-											<li class="dropdown dropdown-notification nav-item"><a class="nav-link nav-link-label" href="/#" data-toggle="dropdown"><i class="ficon ft-mail">             </i></a>
-												<div class="dropdown-menu dropdown-menu-right">
-													<div class="arrow_box_right"><a class="dropdown-item" href="/#"><i class="ft-book"></i> Read Mail</a><a class="dropdown-item" href="/#"><i class="ft-bookmark"></i> Read Later</a><a class="dropdown-item" href="/#"><i class="ft-check-square"></i> Mark all Read       </a></div>
-												</div>
-											</li>
-											<AuthButton />
-										</ul>
+												</li>
+												<AuthButton />
+											</ul>
+										</div>
 									</div>
 								</div>
-							</div>
-						</nav>
-						<Sidebar />
-						<Dashboard />
-						<Footer />
-					</PrivateRoute>
-				</Switch>
+							</nav>
+							<Sidebar />
+							<Dashboard />
+							<Footer />
+						</PrivateRoute>
+					</Switch>
+				</AuthContextProvider >
 			</Router>
 		</div >
 	)
+}
+
+// A wrapper for <Route> that redirects to the login
+// screen if you're not yet authenticated.
+function PrivateRoute({ children, ...rest }) {
+	const { isLoggedIn } = useContext(authContext)
+	console.log(isLoggedIn);
+
+	useEffect(() => {
+		console.log(isLoggedIn)
+	}, [isLoggedIn])
+
+	return (
+		<Route
+			{...rest}
+			render={({ location }) =>
+				// fakeAuth.isAuthenticated ? (
+				isLoggedIn ? (
+					children
+				) : (
+						<Redirect
+							to={{
+								pathname: "/login",
+								state: { from: location }
+							}}
+						/>
+					)
+			}
+		/>
+	);
 }
 
 const fakeAuth = {
@@ -91,9 +113,10 @@ const fakeAuth = {
 };
 
 function AuthButton() {
+	const { isLoggedIn, setIsLoggedIn } = useContext(authContext)
 	let history = useHistory();
 
-	return fakeAuth.isAuthenticated ? (
+	return isLoggedIn ? (
 		<>
 			<li class="dropdown dropdown-user nav-item"><a class="dropdown-toggle nav-link dropdown-user-link" href="/#" data-toggle="dropdown">             <span class="avatar avatar-online"><img src="theme-assets/images/portrait/small/avatar-s-19.png" alt="avatar" /><i></i></span></a>
 				<div class="dropdown-menu dropdown-menu-right">
@@ -103,7 +126,11 @@ function AuthButton() {
 						<div class="dropdown-divider"></div><a class="dropdown-item" href="/#"><i class="ft-power"></i>
 							<button
 								onClick={() => {
-									fakeAuth.signout(() => history.push("/"));
+									localStorage.clear();
+									console.log(localStorage.jwt);
+									setIsLoggedIn(false);
+									setTimeout(() => { }, 4000)
+									history.push("/login")
 								}}
 								style={{ border: "none" }}
 							>
@@ -118,28 +145,6 @@ function AuthButton() {
 	) : (
 			<p style={{ padding: "1.7rem 1rem 1.6rem 1rem" }}>You are not logged in.</p>
 		);
-}
-
-// A wrapper for <Route> that redirects to the login
-// screen if you're not yet authenticated.
-function PrivateRoute({ children, ...rest }) {
-	return (
-		<Route
-			{...rest}
-			render={({ location }) =>
-				fakeAuth.isAuthenticated ? (
-					children
-				) : (
-						<Redirect
-							to={{
-								pathname: "/login",
-								state: { from: location }
-							}}
-						/>
-					)
-			}
-		/>
-	);
 }
 
 function PublicPage() {
