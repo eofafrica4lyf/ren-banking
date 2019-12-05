@@ -11,6 +11,7 @@ function Dashboard() {
 			setData(JSON.parse(localStorage.user))
 		}
 		console.log(data);
+		// eslint-disable-next-line
 	}, [setData])
 
 	return (

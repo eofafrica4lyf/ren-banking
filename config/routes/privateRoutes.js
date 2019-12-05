@@ -5,9 +5,8 @@ const transactionValidation = require('../../api/validations/transaction.validat
 
 const privateRoutes = {
 	'POST /transaction/send': {
-		path: 'TeamController.create',
-		middlewares: [validate(transactionValidation.	createTransaction: {
-			), Auth]
+		path: 'TransactionController.send',
+		middlewares: [validate(transactionValidation.createTransaction), Auth]
 	}
 
 };
