@@ -16,52 +16,55 @@ import Dashboard from "./components/pages/Dashboard"
 import Login from './components/pages/Login'
 import Register from './components/pages/Register'
 
+import AuthContextProvider from './context/authContext'
+
 function App() {
 	return (
 		<div className='App'>
-			<Router>
-
-				<Switch>
-					<Route exact path="/">
-						<LoginPage />
-					</Route>
-					<Route path="/public">
-						<PublicPage />
-					</Route>
-					<Route path="/login">
-						<LoginPage />
-					</Route>
-					<Route path="/register">
-						<RegisterPage />
-					</Route>
-					<PrivateRoute exact path="/dashboard">
-						<nav class="header-navbar navbar-expand-md navbar navbar-with-menu navbar-without-dd-arrow fixed-top navbar-semi-light">
-							<div class="navbar-wrapper">
-								<div class="navbar-container content">
-									<div class="collapse navbar-collapse show" id="navbar-mobile">
-										<ul class="nav navbar-nav mr-auto float-left">
-											<li class="nav-item d-block d-md-none"><a class="nav-link nav-menu-main menu-toggle hidden-xs" href="/#"><i class="ft-menu"></i></a></li>
-										</ul>
-										<ul class="nav navbar-nav float-right">
-										</ul>
-										<ul class="nav navbar-nav float-right">
-											<li class="dropdown dropdown-notification nav-item"><a class="nav-link nav-link-label" href="/#" data-toggle="dropdown"><i class="ficon ft-mail">             </i></a>
-												<div class="dropdown-menu dropdown-menu-right">
-													<div class="arrow_box_right"><a class="dropdown-item" href="/#"><i class="ft-book"></i> Read Mail</a><a class="dropdown-item" href="/#"><i class="ft-bookmark"></i> Read Later</a><a class="dropdown-item" href="/#"><i class="ft-check-square"></i> Mark all Read       </a></div>
-												</div>
-											</li>
-											<AuthButton />
-										</ul>
+			<AuthContextProvider>
+				<Router>
+					<Switch>
+						<Route exact path="/">
+							<LoginPage />
+						</Route>
+						<Route path="/public">
+							<PublicPage />
+						</Route>
+						<Route path="/login">
+							<LoginPage />
+						</Route>
+						<Route path="/register">
+							<RegisterPage />
+						</Route>
+						<PrivateRoute exact path="/dashboard">
+							<nav class="header-navbar navbar-expand-md navbar navbar-with-menu navbar-without-dd-arrow fixed-top navbar-semi-light">
+								<div class="navbar-wrapper">
+									<div class="navbar-container content">
+										<div class="collapse navbar-collapse show" id="navbar-mobile">
+											<ul class="nav navbar-nav mr-auto float-left">
+												<li class="nav-item d-block d-md-none"><a class="nav-link nav-menu-main menu-toggle hidden-xs" href="/#"><i class="ft-menu"></i></a></li>
+											</ul>
+											<ul class="nav navbar-nav float-right">
+											</ul>
+											<ul class="nav navbar-nav float-right">
+												<li class="dropdown dropdown-notification nav-item"><a class="nav-link nav-link-label" href="/#" data-toggle="dropdown"><i class="ficon ft-mail">             </i></a>
+													<div class="dropdown-menu dropdown-menu-right">
+														<div class="arrow_box_right"><a class="dropdown-item" href="/#"><i class="ft-book"></i> Read Mail</a><a class="dropdown-item" href="/#"><i class="ft-bookmark"></i> Read Later</a><a class="dropdown-item" href="/#"><i class="ft-check-square"></i> Mark all Read       </a></div>
+													</div>
+												</li>
+												<AuthButton />
+											</ul>
+										</div>
 									</div>
 								</div>
-							</div>
-						</nav>
-						<Sidebar />
-						<Dashboard />
-						<Footer />
-					</PrivateRoute>
-				</Switch>
-			</Router>
+							</nav>
+							<Sidebar />
+							<Dashboard />
+							<Footer />
+						</PrivateRoute>
+					</Switch>
+				</Router>
+			</AuthContextProvider >
 		</div >
 	)
 }

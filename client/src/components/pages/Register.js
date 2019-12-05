@@ -1,7 +1,8 @@
-import React, { useState } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import registerUser from '../../apiservice/registerUser'
 import { withRouter } from 'react-router-dom';
 // import history from '../../helpers/history'
+import { authContext } from '../../context/authContext'
 
 function Register(props) {
 	const [state, setState] = useState({
@@ -12,6 +13,8 @@ function Register(props) {
 		password: "password",
 		password2: "password"
 	})
+	// const { isLoggedIn, setIsLoggedIn } = useContext(authContext);
+	// const { userInfo, setUserInfo } = useContext(authContext);
 
 	function fieldHandler(evt) {
 		const value = evt.target.value;
@@ -23,13 +26,15 @@ function Register(props) {
 
 	async function formSubmitHandler(evt) {
 		evt.preventDefault();
-		console.log(state);
 		const result = await registerUser(state);
 		console.log(result);
 		if (result.statusCode === 200) {
-			console.log('here');
-			// return <Redirect to='/dashboard' />;
-			props.history.push('/dashboard')
+			props.history.push('/login')
+		} else {
+			document.querySelector("#login-notice").style.display = "block";
+			setTimeout(() => {
+				document.querySelector("#login-notice").style.display = "none";
+			}, 3000);
 		}
 	}
 
@@ -52,6 +57,9 @@ function Register(props) {
 											<h6 class="card-subtitle text-muted pt-3 pb-1">Let's get you started by getting your details!</h6>
 										</div>
 										<div class="card-body">
+											<div id="login-notice" style={{ display: "none", borderRadius: "5px", border: "1px solid red", backgroundColor: "#ffe3e3", paddingTop: "10px", marginBottom: "1em" }}>
+												<p style={{ color: "red" }}>You have some errors in some fields!</p>
+											</div>
 											<form class="form" onSubmit={formSubmitHandler}>
 												<div class="form-body">
 													<div class="form-group">
