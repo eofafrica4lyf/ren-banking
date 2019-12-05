@@ -9,7 +9,7 @@ const UserController = () => {
 	const register = async (req, res, next) => {
 		try {
 			let { firstName, middleName, lastName, email, password, password2 } = req.body;
-
+			console.log("Oh yeah!")
 			if (password !== password2) {
 				return res.json(
 					sendResponse(
@@ -44,7 +44,7 @@ const UserController = () => {
 			userObject.password = bcryptService().hashPassword(userObject);
 			const user = await UserQuery.create(userObject);
 			delete user.password
-			
+
 			return res.json(sendResponse(httpStatus.OK, 'success', user, null));
 		} catch (err) {
 			next(err);

@@ -26,7 +26,7 @@ function Dashboard() {
 											<i class="ft-pie-chart danger font-large-1 float-right p-1"></i>
 										</div>
 										<div class="progress-stats-container ct-golden-section height-75 position-relative pt-3  ">
-											<div id="progress-stats-bar-chart"></div>
+											{/* <div id="progress-stats-bar-chart"></div> */}
 											<div className="available-balance">
 												<h1># 5,600.38</h1>
 											</div>
@@ -69,8 +69,8 @@ function Dashboard() {
 													<p><span>BVN No: </span>012345678</p>
 												</div>
 											</div>
-											<div id="progress-stats-bar-chart2"></div>
-											<div id="progress-stats-line-chart2" class="progress-stats-shadow"></div>
+											{/* <div id="progress-stats-bar-chart2"></div> */}
+											{/* <div id="progress-stats-line-chart2" class="progress-stats-shadow"></div> */}
 										</div>
 									</div>
 								</div>
