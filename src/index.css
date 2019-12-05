@@ -57,3 +57,19 @@ code {
 	padding-top: 10px;
 }
 
+
+.public-header .navbar-container, .public-header .app-content{
+	margin-left: 0px !important;
+}
+
+.public-header .navbar-header {
+	background: none;
+}
+
+.public-header .navbar-semi-light .navbar-header .brand-text {
+	color: #ffffff;
+}
+
+.register-form .card-body, .login-form .card-body{
+	padding: 2.5em
+}
