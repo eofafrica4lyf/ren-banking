@@ -24,3 +24,36 @@ code {
 	color: #eee;
 	padding: 2em;
 }
+
+.available-balance,.activity-stats{
+	padding: 1.3em 15px 0em;
+	text-align: left;
+	font-weight: 900;
+}
+
+.activity-stats{
+	padding: 1.3em 15px 0em;
+	text-align: left;
+	font-weight: 400;
+}
+
+.banking-info{
+	padding: 1.3em 15px 0em;
+	text-align: left;
+	font-weight: 400;
+}
+
+.more-info p{
+	display: inline-block;
+	width: 50%;
+	padding-right: 20px;
+}
+
+.more-info p span{
+	font-weight: 600;
+}
+
+.users-list i{
+	padding-top: 10px;
+}
+
