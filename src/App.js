@@ -117,7 +117,9 @@ function App() {
 										</div>
 										<div class="progress-stats-container ct-golden-section height-75 position-relative pt-3  ">
 											<div id="progress-stats-bar-chart"></div>
-											<h1 class="available-balance"># 5,600.38</h1>
+											<div className="available-balance">
+												<h1># 5,600.38</h1>
+											</div>
 											<div id="progress-stats-line-chart" class="progress-stats-shadow"></div>
 										</div>
 									</div>
@@ -132,6 +134,10 @@ function App() {
 										</div>
 										<div class="progress-stats-container ct-golden-section height-75 position-relative pt-3">
 											<div id="progress-stats-bar-chart1"></div>
+											<div className="activity-stats">
+												<h1>Last Login</h1>
+												<p>12:00pm, Tuesday, 24th December, 2019</p>
+											</div>
 											<div id="progress-stats-line-chart1" class="progress-stats-shadow"></div>
 										</div>
 									</div>
