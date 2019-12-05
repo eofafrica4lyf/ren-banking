@@ -24,3 +24,9 @@ code {
 	color: #eee;
 	padding: 2em;
 }
+
+.available-balance{
+	padding: 1.3em 15px 0em;
+	text-align: left;
+	font-weight: 900;
+}
