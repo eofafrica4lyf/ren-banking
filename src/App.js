@@ -44,7 +44,7 @@ function App() {
 								</li>
 								<li class="dropdown dropdown-user nav-item"><a class="dropdown-toggle nav-link dropdown-user-link" href="/#" data-toggle="dropdown">             <span class="avatar avatar-online"><img src="theme-assets/images/portrait/small/avatar-s-19.png" alt="avatar" /><i></i></span></a>
 									<div class="dropdown-menu dropdown-menu-right">
-										<div class="arrow_box_right"><a class="dropdown-item" href="/#"><span class="avatar avatar-online"><img src="theme-assets/images/portrait/small/avatar-s-19.png" alt="avatar" /><span class="user-name text-bold-700 ml-1">John Doe</span></span></a>
+										<div class="arrow_box_right"><a class="dropdown-item" href="/#"><span class="avatar avatar-online"><img src="theme-assets/images/portrait/small/avatar-s-19.png" alt="avatar" /><span class="user-name text-bold-700 ml-1">Emmanuel</span></span></a>
 											<div class="dropdown-divider"></div><a class="dropdown-item" href="/#"><i class="ft-user"></i> Edit Profile</a><a class="dropdown-item" href="/#"><i class="ft-mail"></i> My Inbox</a><a class="dropdown-item" href="/#"><i class="ft-check-square"></i> Task</a><a class="dropdown-item" href="/#"><i class="ft-message-square"></i> Chats</a>
 											<div class="dropdown-divider"></div><a class="dropdown-item" href="/#"><i class="ft-power"></i> Logout</a>
 										</div>
@@ -369,10 +369,10 @@ function App() {
 												<span class="sr-only">Next</span>
 											</a>
 										</div>
-										<div class="card-body">
+										{/* <div class="card-body">
 											<a href="/#" class="card-link">Card link</a>
 											<a href="/#" class="card-link">Another link</a>
-										</div>
+										</div> */}
 									</div>
 									<div class="card-footer border-top-blue-grey border-top-lighten-5 text-muted">
 										<span class="float-left">2 days ago</span>
@@ -392,11 +392,11 @@ function App() {
 
 
 			<footer class="footer footer-static footer-light navbar-border navbar-shadow">
-				<div class="clearfix blue-grey lighten-2 text-sm-center mb-0 px-2"><span class="float-md-left d-block d-md-inline-block">2018  &copy; Copyright <a class="text-bold-800 grey darken-2" href="https://themeselection.com" target="_blank" rel="noopener noreferrer">ThemeSelection</a></span>
+				<div class="clearfix blue-grey lighten-2 text-sm-center mb-0 px-2"><span class="float-md-left d-block d-md-inline-block">2019  &copy; Copyright <a class="text-bold-800 grey darken-2" href="/#" target="_blank" rel="noopener noreferrer">Emmanuel Aboderin</a></span>
 					<ul class="list-inline float-md-right d-block d-md-inline-blockd-none d-lg-block mb-0">
-						<li class="list-inline-item"><a class="my-1" href="https://themeselection.com/" target="_blank" rel="noopener noreferrer"> More themes</a></li>
-						<li class="list-inline-item"><a class="my-1" href="https://themeselection.com/support" target="_blank" rel="noopener noreferrer"> Support</a></li>
-						<li class="list-inline-item"><a class="my-1" href="https://themeselection.com/products/chameleon-admin-modern-bootstrap-webapp-dashboard-html-template-ui-kit/" target="_blank" rel="noopener noreferrer"> Purchase</a></li>
+						<li class="list-inline-item pr-3"><a class="my-1" href="/#" target="_blank" rel="noopener noreferrer">QR Payment</a></li>
+						<li class="list-inline-item pr-3"><a class="my-1" href="/#" target="_blank" rel="noopener noreferrer">Merchant Services</a></li>
+						<li class="list-inline-item pr-3"><a class="my-1" href="/#" target="_blank" rel="noopener noreferrer"> Logout</a></li>
 					</ul>
 				</div>
 			</footer>
