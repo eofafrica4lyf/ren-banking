@@ -9,7 +9,6 @@ const UserController = () => {
 	const register = async (req, res, next) => {
 		try {
 			let { firstName, middleName, lastName, email, password, password2 } = req.body;
-			console.log("Oh yeah!")
 			if (password !== password2) {
 				return res.json(
 					sendResponse(
@@ -55,6 +54,7 @@ const UserController = () => {
 	const login = async (req, res, next) => {
 		try {
 			const { email, password } = req.body;
+			console.log("Oh yeah!!!")
 
 			const user = await UserQuery.findByEmail(email);
 			if (!user) {
@@ -82,7 +82,6 @@ const UserController = () => {
 			if (bcryptService().comparePassword(password, user.password)) {
 				// to issue token with the user object, convert it to JSON
 				const token = authService().issue(userInfo);
-
 
 				return res.json(
 					sendResponse(httpStatus.OK, 'success', userInfo, null, token)

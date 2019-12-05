@@ -1,8 +1,6 @@
-import React, { useState, useContext, useEffect } from 'react'
+import React, { useState } from 'react'
 import registerUser from '../../apiservice/registerUser'
 import { withRouter } from 'react-router-dom';
-// import history from '../../helpers/history'
-import { authContext } from '../../context/authContext'
 
 function Register(props) {
 	const [state, setState] = useState({
@@ -13,8 +11,6 @@ function Register(props) {
 		password: "password",
 		password2: "password"
 	})
-	// const { isLoggedIn, setIsLoggedIn } = useContext(authContext);
-	// const { userInfo, setUserInfo } = useContext(authContext);
 
 	function fieldHandler(evt) {
 		const value = evt.target.value;
