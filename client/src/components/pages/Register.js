@@ -1,6 +1,38 @@
-import React from 'react'
+import React, { useState } from 'react'
+import registerUser from '../../apiservice/registerUser'
+import { withRouter } from 'react-router-dom';
+// import history from '../../helpers/history'
 
-function Register() {
+function Register(props) {
+	const [state, setState] = useState({
+		firstName: "Emmanuel",
+		middleName: "Abolade",
+		lastName: "Aboderin",
+		email: "aboderinemmanuel@gmail.com",
+		password: "password",
+		password2: "password"
+	})
+
+	function fieldHandler(evt) {
+		const value = evt.target.value;
+		setState({
+			...state,
+			[evt.target.name]: value
+		});
+	}
+
+	async function formSubmitHandler(evt) {
+		evt.preventDefault();
+		console.log(state);
+		const result = await registerUser(state);
+		console.log(result);
+		if (result.statusCode === 200) {
+			console.log('here');
+			// return <Redirect to='/dashboard' />;
+			props.history.push('/dashboard')
+		}
+	}
+
 	return (
 		<div class="app-content content">
 			<div class="content-wrapper">
@@ -20,27 +52,37 @@ function Register() {
 											<h6 class="card-subtitle text-muted pt-3 pb-1">Let's get you started by getting your details!</h6>
 										</div>
 										<div class="card-body">
-											<form class="form">
+											<form class="form" onSubmit={formSubmitHandler}>
 												<div class="form-body">
 													<div class="form-group">
-														<label for="donationinput1" class="sr-only">First Name</label>
-														<input type="text" id="donationinput1" class="form-control" placeholder="First Name" name="fname" />
+														<label for="firstName" class="sr-only">First Name</label>
+														<input type="text" id="firstName" class="form-control" placeholder="First Name" name="firstName" value={state.firstName}
+															onChange={fieldHandler} />
 													</div>
 													<div class="form-group">
-														<label for="donationinput2" class="sr-only">Last Name</label>
-														<input type="text" id="donationinput2" class="form-control" placeholder="Last Name" name="lanme" />
+														<label for="middleName" class="sr-only">Middle Name</label>
+														<input type="text" id="middleName" class="form-control" placeholder="Middle Name" name="middleName" value={state.middleName}
+															onChange={fieldHandler} />
 													</div>
 													<div class="form-group">
-														<label for="donationinput3" class="sr-only">E-mail</label>
-														<input type="email" id="donationinput3" class="form-control" placeholder="E-mail" name="email" />
+														<label for="lastName" class="sr-only">Last Name</label>
+														<input type="text" id="lastName" class="form-control" placeholder="Last Name" name="lastName" value={state.lastName}
+															onChange={fieldHandler} />
 													</div>
 													<div class="form-group">
-														<label for="donationinput4" class="sr-only">Contact Number</label>
-														<input type="text" id="donationinput4" class="form-control" placeholder="Phone" name="phone" />
+														<label for="email" class="sr-only">E-mail</label>
+														<input type="email" id="email" class="form-control" placeholder="E-mail" name="email" value={state.email}
+															onChange={fieldHandler} />
 													</div>
 													<div class="form-group">
-														<label for="donationinput7" class="sr-only">Message</label>
-														<textarea id="donationinput7" rows="5" class="form-control square" name="message" placeholder="message"></textarea>
+														<label for="password" class="sr-only">Password</label>
+														<input type="password" id="password" class="form-control" placeholder="Paswword" name="password" value={state.password}
+															onChange={fieldHandler} />
+													</div>
+													<div class="form-group">
+														<label for="password2" class="sr-only">Confirm Password</label>
+														<input type="password" id="password2" class="form-control" placeholder="Confirm Paswword" name="password2" value={state.password2}
+															onChange={fieldHandler} />
 													</div>
 												</div>
 												<div class="form-actions center">
@@ -59,5 +101,5 @@ function Register() {
 	)
 }
 
-export default Register
+export default withRouter(Register)
 

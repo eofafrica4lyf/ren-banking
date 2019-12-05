@@ -14,6 +14,25 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
 app.use(logger('dev'));
+// Setup Request logging
+const logFormat = process.env.NODE_ENV === "production" ? "combined" : "dev";
+app.use(
+  logger(logFormat, {
+    skip: function(_req, res) {
+      return res.statusCode < 400;
+    },
+    stream: process.stderr,
+  })
+);
+
+app.use(
+  logger(logFormat, {
+    skip: function(_req, res) {
+      return res.statusCode >= 400;
+    },
+    stream: process.stdout,
+  })
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
