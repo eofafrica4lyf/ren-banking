@@ -1,6 +1,60 @@
-import React from 'react'
+import React, { useState, useEffect, useContext } from 'react'
+import userLogin from '../../apiservice/userLogin'
+import { withRouter } from 'react-router-dom';
+import { authContext } from '../../context/authContext'
 
-function Login() {
+function Login(props) {
+	const [state, setState] = useState({
+		email: "aboderinemmanuel@gmail.com",
+		password: "password",
+	})
+	const { isLoggedIn, setIsLoggedIn } = useContext(authContext)
+	const { setUserInfo } = useContext(authContext)
+	console.log(isLoggedIn);
+
+	function fieldHandler(evt) {
+		const value = evt.target.value;
+		setState({
+			...state,
+			[evt.target.name]: value
+		});
+	}
+
+	async function formSubmitHandler(evt) {
+		evt.preventDefault();
+		const result = await userLogin(state);
+		console.log(result);
+		if (result.statusCode === 200) {
+			localStorage.setItem("jwt", JSON.stringify({ id: result.payload._id, token: result.token }))
+			result.payload.balance = result.payload.balance.toFixed(2);
+			result.payload.lastLogin = new Date(result.payload.lastLogin).toGMTString()
+			localStorage.setItem("user", JSON.stringify(result.payload))
+			console.log(isLoggedIn);
+			setIsLoggedIn(true)
+			setUserInfo(result.payload)
+			console.log(isLoggedIn);
+			props.history.push('/dashboard')
+		} else {
+			document.querySelector("#login-notice").style.display = "block";
+			setTimeout(() => {
+				document.querySelector("#login-notice").style.display = "none";
+			}, 3000);
+		}
+	}
+
+	useEffect(() => {
+		if (localStorage.jwt) {
+			setIsLoggedIn(true);
+			props.history.push('/dashboard')
+		}
+	}, [setIsLoggedIn, props.history]);
+
+	useEffect(() => {
+		if (isLoggedIn) {
+			props.history.push('/dashboard')
+		}
+	})
+
 	return (
 		<div class="app-content content">
 			<div class="content-wrapper">
@@ -20,31 +74,24 @@ function Login() {
 											<h6 class="card-subtitle text-muted">Login to User Dashboard</h6>
 										</div>
 										<div class="card-body">
-											<form class="form">
+											<div id="login-notice" style={{ display: "none", borderRadius: "5px", border: "1px solid red", backgroundColor: "#ffe3e3", paddingTop: "10px", marginBottom: "1em" }}>
+												<p style={{ color: "red" }}>Invalid Email or Password!</p>
+											</div>
+											<form class="form" onSubmit={formSubmitHandler}>
 												<div class="form-body">
 													<div class="form-group">
-														<label for="donationinput1" class="sr-only">First Name</label>
-														<input type="text" id="donationinput1" class="form-control" placeholder="First Name" name="fname" />
+														<label for="email" class="sr-only">First Name</label>
+														<input type="email" id="email" class="form-control" placeholder="Email Address" name="email" value={state.email}
+															onChange={fieldHandler} />
 													</div>
 													<div class="form-group">
-														<label for="donationinput2" class="sr-only">Last Name</label>
-														<input type="text" id="donationinput2" class="form-control" placeholder="Last Name" name="lanme" />
-													</div>
-													<div class="form-group">
-														<label for="donationinput3" class="sr-only">E-mail</label>
-														<input type="email" id="donationinput3" class="form-control" placeholder="E-mail" name="email" />
-													</div>
-													<div class="form-group">
-														<label for="donationinput4" class="sr-only">Contact Number</label>
-														<input type="text" id="donationinput4" class="form-control" placeholder="Phone" name="phone" />
-													</div>
-													<div class="form-group">
-														<label for="donationinput7" class="sr-only">Message</label>
-														<textarea id="donationinput7" rows="5" class="form-control square" name="message" placeholder="message"></textarea>
+														<label for="password" class="sr-only">Last Name</label>
+														<input type="password" id="password" class="form-control" placeholder="Password" name="password" value={state.password}
+															onChange={fieldHandler} />
 													</div>
 												</div>
 												<div class="form-actions center">
-													<button type="submit" class="btn btn-outline-primary">Send</button>
+													<button type="submit" class="btn btn-outline-primary">Log In</button>
 												</div>
 											</form>
 										</div>
@@ -59,5 +106,5 @@ function Login() {
 	)
 }
 
-export default Login
+export default withRouter(Login);
 

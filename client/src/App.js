@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useContext } from 'react'
 import {
 	BrowserRouter as Router,
 	Switch,
@@ -17,12 +17,13 @@ import Login from './components/pages/Login'
 import Register from './components/pages/Register'
 
 import AuthContextProvider from './context/authContext'
+import { authContext } from './context/authContext'
 
 function App() {
 	return (
 		<div className='App'>
-			<AuthContextProvider>
-				<Router>
+			<Router>
+				<AuthContextProvider>
 					<Switch>
 						<Route exact path="/">
 							<LoginPage />
@@ -63,10 +64,40 @@ function App() {
 							<Footer />
 						</PrivateRoute>
 					</Switch>
-				</Router>
-			</AuthContextProvider >
+				</AuthContextProvider >
+			</Router>
 		</div >
 	)
+}
+
+// A wrapper for <Route> that redirects to the login
+// screen if you're not yet authenticated.
+function PrivateRoute({ children, ...rest }) {
+	const { isLoggedIn } = useContext(authContext)
+	console.log(isLoggedIn);
+
+	useEffect(() => {
+		console.log(isLoggedIn)
+	}, [isLoggedIn])
+
+	return (
+		<Route
+			{...rest}
+			render={({ location }) =>
+				// fakeAuth.isAuthenticated ? (
+				isLoggedIn ? (
+					children
+				) : (
+						<Redirect
+							to={{
+								pathname: "/login",
+								state: { from: location }
+							}}
+						/>
+					)
+			}
+		/>
+	);
 }
 
 const fakeAuth = {
@@ -82,9 +113,10 @@ const fakeAuth = {
 };
 
 function AuthButton() {
+	const { isLoggedIn, setIsLoggedIn } = useContext(authContext)
 	let history = useHistory();
 
-	return fakeAuth.isAuthenticated ? (
+	return isLoggedIn ? (
 		<>
 			<li class="dropdown dropdown-user nav-item"><a class="dropdown-toggle nav-link dropdown-user-link" href="/#" data-toggle="dropdown">             <span class="avatar avatar-online"><img src="theme-assets/images/portrait/small/avatar-s-19.png" alt="avatar" /><i></i></span></a>
 				<div class="dropdown-menu dropdown-menu-right">
@@ -94,7 +126,11 @@ function AuthButton() {
 						<div class="dropdown-divider"></div><a class="dropdown-item" href="/#"><i class="ft-power"></i>
 							<button
 								onClick={() => {
-									fakeAuth.signout(() => history.push("/"));
+									localStorage.clear();
+									console.log(localStorage.jwt);
+									setIsLoggedIn(false);
+									setTimeout(() => { }, 4000)
+									history.push("/login")
 								}}
 								style={{ border: "none" }}
 							>
@@ -109,28 +145,6 @@ function AuthButton() {
 	) : (
 			<p style={{ padding: "1.7rem 1rem 1.6rem 1rem" }}>You are not logged in.</p>
 		);
-}
-
-// A wrapper for <Route> that redirects to the login
-// screen if you're not yet authenticated.
-function PrivateRoute({ children, ...rest }) {
-	return (
-		<Route
-			{...rest}
-			render={({ location }) =>
-				fakeAuth.isAuthenticated ? (
-					children
-				) : (
-						<Redirect
-							to={{
-								pathname: "/login",
-								state: { from: location }
-							}}
-						/>
-					)
-			}
-		/>
-	);
 }
 
 function PublicPage() {
