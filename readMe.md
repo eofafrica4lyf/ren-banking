@@ -16,3 +16,8 @@ The application also exposes API's for
 - Run 'cd client && npm install'
 - Now run 'npm run start' to view the Frontend.
 
+### Exposed API
+
+- User Login: http://localhost:5000/api/v1/public/login
+- User Registration: http://localhost:5000/api/v1/public/register
+
