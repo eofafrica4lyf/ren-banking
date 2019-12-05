@@ -7,7 +7,9 @@ const publicRoutes = {
 		middlewares: [validate(paramValidation.createUser, { abortEarly: false })]
 	},
 
-	'POST /user/login': 'UserController.login',
+	'POST /user/login': {
+		path: 'UserController.login'
+	}
 
 };
 

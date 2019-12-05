@@ -5,7 +5,7 @@ import {
 	Route,
 	Redirect,
 	useHistory,
-	useLocation
+	// useLocation
 } from "react-router-dom";
 
 import './App.css'
@@ -152,15 +152,15 @@ function PublicPage() {
 }
 
 function LoginPage() {
-	let history = useHistory();
-	let location = useLocation();
+	// let history = useHistory();
+	// let location = useLocation();
 
-	let { from } = location.state || { from: { pathname: "/" } };
-	let login = () => {
-		fakeAuth.authenticate(() => {
-			history.replace(from);
-		});
-	};
+	// let { from } = location.state || { from: { pathname: "/" } };
+	// let login = () => {
+	// 	fakeAuth.authenticate(() => {
+	// 		history.replace(from);
+	// 	});
+	// };
 
 	return (
 		<>
@@ -171,10 +171,6 @@ function LoginPage() {
 					<a href="/register">
 						<p>New to the App? Register</p>
 					</a>
-				</div>
-				<div>
-					<p>You must log in to view the page at {from.pathname}</p>
-					<button onClick={login}>Log in</button>
 				</div>
 			</div>
 		</>
