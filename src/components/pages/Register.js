@@ -9,11 +9,11 @@ function Register() {
 					<section id="content-types">
 						<div class="row">
 							<div class="col-12 mt-3 mb-1">
-								<h1 class="text-uppercase" style={{color: "white", paddingBottom: "3em"}}>Registration Page</h1>
+								<h1 class="text-uppercase" style={{ color: "white", paddingBottom: "3em" }}>Registration Page</h1>
 							</div>
 						</div>
 						<div class="row match-height justify-content-center">
-							<div class="col-xl-3 col-md-9">
+							<div class="col-xl-3 col-md-9 col-sm-8 col-xs-6">
 								<div class="card register-form">
 									<div class="card-content">
 										<div class="card-body">

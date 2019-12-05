@@ -73,3 +73,16 @@ code {
 .register-form .card-body, .login-form .card-body{
 	padding: 2.5em
 }
+
+
+@media only screen and (max-width: 767px){
+	ul.nav.navbar-nav.mr-auto.float-left {
+		position: absolute;
+	}
+}
+
+@media only screen and (max-width: 576px){
+	.public-header .col-xl-3.col-md-9.col-sm-8.col-xs-6 {
+    margin: 3em;
+	}
+}
