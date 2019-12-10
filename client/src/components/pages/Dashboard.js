@@ -1,5 +1,5 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { authContext } from "../../context/authContext"
+import React, { useEffect, useState } from 'react';
+// import { authContext } from "../../context/authContext"
 import checkReceiverExists from '../../apiservice/checkReceiverExist'
 import transferMoney from '../../apiservice/transferMoney'
 import { withRouter } from 'react-router-dom';
@@ -12,7 +12,7 @@ function Dashboard(props) {
 		amountSent: ''
 	})
 	const [data, setData] = useState(JSON.parse(localStorage.user));
-	const { userInfo } = useContext(authContext)
+	// const { userInfo } = useContext(authContext)
 
 	async function formSubmitHandler(evt) {
 		evt.preventDefault();
@@ -330,22 +330,6 @@ function Dashboard(props) {
 		</div>
 	)
 }
-
-const arr = [
-	{
-		sendAccountNumber: 1234567890,
-		receiverAccountNumber: 1987654321,
-		receiverName: "Receiver's Name",
-		amountSent: 3000,
-		transferMessage: "Transfer Message"
-	},{
-		sendAccountNumber: 1111111111,
-		receiverAccountNumber: 100000000,
-		receiverName: "Receiver2's Name",
-		amountSent: 5000,
-		transferMessage: "Transfer Message2"
-	}
-]
 
 
 export default withRouter(Dashboard);
