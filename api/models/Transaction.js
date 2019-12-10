@@ -16,6 +16,10 @@ const transactionSchema = new mongoose.Schema({
 	amountSent: {
 		type: Number,
 		required: true,
+	},
+	transferMessage: {
+		type: String,
+		required: true
 	}
 },
 	{
