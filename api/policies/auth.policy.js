@@ -3,7 +3,7 @@ const JWTService = require('../services/auth.service');
 
 module.exports = async (req, res, next) => {
 	let tokenToVerify;
-
+	
 	if (req.header('Authorization')) {
 		const parts = req.header('Authorization').split(' ');
 
@@ -29,7 +29,7 @@ module.exports = async (req, res, next) => {
 	} else {
 		return res.status(401).json({ msg: 'No Authorization was found' });
 	}
-
+	
 	return JWTService().verify(tokenToVerify, (err, thisToken) => {
 		if (err) return res.status(401).json({ err });
 		req.token = thisToken;
