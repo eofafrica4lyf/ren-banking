@@ -78,6 +78,8 @@ const UserController = () => {
 				bvn: user.bvn,
 				lastLogin: user.lastLogin
 			};
+			user.lastLogin = Date.now();
+			user.save();
 
 			if (bcryptService().comparePassword(password, user.password)) {
 				// to issue token with the user object, convert it to JSON
