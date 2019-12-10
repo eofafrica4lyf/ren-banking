@@ -42,19 +42,25 @@ const userSchema = new mongoose.Schema({
 		required: true,
 		minlength: 10,
 		maxlength: 10,
-		default: `${'2'+Math.floor(Math.random() * 1000000000)}`
+		default: `${'2'+ Math.floor(Math.random() * 900000000 + 100000000) }`
 	},
 	bvn: {
 		type: String,
 		required: true,
 		minlength: 9,
 		maxlength: 9,
-		default: `${Math.floor(Math.random() * 1000000000)}`
+		default: `${'2'+ Math.floor(Math.random() * 90000000 + 10000000) }`
 	},
 	lastLogin: {
 		type: Date,
 		default: Date.now
-	}
+	},
+	transactions: [
+		{ 
+			type: mongoose.Schema.Types.ObjectId, 
+			ref: 'Transaction' 
+		}
+	]
 },
 {
   timestamps: true

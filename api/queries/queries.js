@@ -1,8 +1,7 @@
 const mongoose = require('../../config/mongo-database');
 let ObjectId = mongoose.Schema.Types.ObjectId;
 const User = require('../models/User');
-const Team = require('../models/Team');
-const Fixture = require('../models/Fixture');
+const Transaction = require('../models/Transaction');
 
 class Queries {
 	constructor(Model) {
@@ -17,8 +16,12 @@ class Queries {
 		return this.Model.find();
 	}
 
-	findByIdOrFixtureUrl(id){
-		return this.Model.findOne().or([{url: new RegExp(id)},{_id: id}])
+	findByAccountNumber(accountNumber) {
+		return this.Model.findOne({ accountNumber })
+	}
+
+	findByIdOrFixtureUrl(id) {
+		return this.Model.findOne().or([{ url: new RegExp(id) }, { _id: id }])
 	}
 
 	findByHomeTeam(homeTeam) {
@@ -59,11 +62,9 @@ class Queries {
 }
 
 const UserQuery = new Queries(User);
-const TeamQuery = new Queries(Team);
-const FixtureQuery = new Queries(Fixture);
+const TransactionQuery = new Queries(Transaction);
 
 module.exports = {
 	UserQuery,
-	TeamQuery,
-	FixtureQuery
+	TransactionQuery,
 };

@@ -3,6 +3,8 @@ const bcryptService = require('../services/bcrypt.service');
 const httpStatus = require('http-status');
 const sendResponse = require('../../helpers/response');
 const { UserQuery } = require('../queries/queries');
+const User = require("../models/User");
+const Transaction = require("../models/Transaction");
 
 
 const UserController = () => {
@@ -56,7 +58,8 @@ const UserController = () => {
 			const { email, password } = req.body;
 			console.log("Oh yeah!!!")
 
-			const user = await UserQuery.findByEmail(email);
+			const user = await await User.findOne({email}).populate('transactions');
+			
 			if (!user) {
 				return res.json(
 					sendResponse(
@@ -76,8 +79,11 @@ const UserController = () => {
 				balance: user.balance,
 				accountNumber: user.accountNumber,
 				bvn: user.bvn,
-				lastLogin: user.lastLogin
+				lastLogin: user.lastLogin,
+				transactions: user.transactions
 			};
+			user.lastLogin = Date.now();
+			user.save();
 
 			if (bcryptService().comparePassword(password, user.password)) {
 				// to issue token with the user object, convert it to JSON

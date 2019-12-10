@@ -33,7 +33,10 @@ module.exports = {
 			bvn: Joi.string()
 				.min(9)
 				.max(9),
-			lastLogin: Joi.date()
+			lastLogin: Joi.date(),
+			transactions: [
+				Joi.string()
+			]
 		}
 	},
 	// POST /api/v1/public/admin/signup

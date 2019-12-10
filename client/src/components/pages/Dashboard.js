@@ -1,16 +1,102 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { authContext } from "../../context/authContext"
+import checkReceiverExists from '../../apiservice/checkReceiverExist'
+import transferMoney from '../../apiservice/transferMoney'
+import { withRouter } from 'react-router-dom';
 
-function Dashboard() {
-	const [data, setData] = useState({});
+function Dashboard(props) {
+	const [state, setState] = useState({
+		senderAccountNumber: '',
+		receiverAccountNumber: '2762203380',
+		transferMessage: '',
+		amountSent: ''
+	})
+	const [data, setData] = useState(JSON.parse(localStorage.user));
 	const { userInfo } = useContext(authContext)
-	console.log(userInfo);
+
+	async function formSubmitHandler(evt) {
+		evt.preventDefault();
+		let token = '';
+		if (localStorage.jwt) {
+			token = JSON.parse(localStorage.getItem('jwt'))
+		}
+
+		if (!document.querySelector("#amount_sent").disabled && !document.querySelector("#transfer_message").disabled) {
+			const result = await transferMoney({
+				senderAccountNumber: state.senderAccountNumber,
+				receiverAccountNumber: state.receiverAccountNumber,
+				token: token.token,
+				amountSent: state.amountSent,
+				transferMessage: state.transferMessage
+			})
+
+			result.payload.lastLogin = new Date(result.payload.lastLogin).toGMTString()
+			localStorage.setItem("user", JSON.stringify(result.payload));
+
+			setData(result.payload)
+
+			props.history.push('/')
+			return;
+		} else {
+			if (state.senderAccountNumber === state.receiverAccountNumber) {
+				document.querySelector(".error-text p").innerHTML = `You cannot send to yourself!`;
+				document.querySelector(".error-text").style.display = "block";
+				setTimeout(() => {
+					document.querySelector(".error-text").style.display = "none";
+					document.querySelector(".error-text p").innerHTML = ``;
+				}, 3000);
+				return;
+			}
+			const result = await checkReceiverExists({ 
+				senderAccountNumber: state.senderAccountNumber, 
+				receiverAccountNumber: state.receiverAccountNumber, 
+				token: token.token 
+			});
+
+			if (result.payload) {
+				document.querySelector(".account_name").innerHTML = `${result.payload.firstName} ${result.payload.middleName} ${result.payload.lastName}`;
+				document.querySelector("#amount_sent").disabled = false;
+				document.querySelector("#transfer_message").disabled = false;
+				document.querySelector(".transfer-button").disabled = false;
+			} else {
+				document.querySelector("p.account_name").innerHTML = `Receiver not Found!`;
+			}
+			return;
+		}
+	}
+
+	function fieldHandler(evt) {
+		const value = evt.target.value;
+		setState({
+			...state,
+			[evt.target.name]: value
+		});
+
+		if (evt.target.name === "receiverAccountNumber") {
+			if (evt.target.value.length === 10) {
+				document.querySelector(".transfer-button").disabled = false;
+			} else {
+				document.querySelector(".transfer-button").disabled = true;
+			}
+		}
+	}
+
+	function currencyFormat(num) {
+		if (num !== undefined && num !== "undefined" && num !== null && !isNaN(num)) {
+			return '#' + num.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+		}
+	}
 
 	useEffect(() => {
 		if (localStorage.user) {
-			setData(JSON.parse(localStorage.user))
+			const user = JSON.parse(localStorage.user)
+			setData(user)
+			setState({
+				...state,
+				senderAccountNumber: data.accountNumber
+			})
 		}
-		console.log(data);
+		// eslint-disable-next-line
 	}, [setData])
 
 	return (
@@ -39,7 +125,7 @@ function Dashboard() {
 									<div class="progress-stats-container ct-golden-section height-75 position-relative pt-3  ">
 										{/* <div id="progress-stats-bar-chart"></div> */}
 										<div className="available-balance">
-											<h1>{`# ${data.balance}`}</h1>
+											<h1>{`${currencyFormat(data.balance)}`}</h1>
 										</div>
 										<div id="progress-stats-line-chart" class="progress-stats-shadow"></div>
 									</div>
@@ -109,101 +195,31 @@ function Dashboard() {
 								</div>
 								<div class="card-content">
 									<div id="recent-buyers" class="media-list">
-										<a href="/#" class="media border-0">
-											<div class="media-left pr-1">
-												<span class="avatar avatar-md avatar-online">
-													<img class="media-object rounded-circle" src="theme-assets/images/portrait/small/avatar-s-7.png" alt="Generic placeholder" />
-													<i></i>
-												</span>
-											</div>
-											<div class="media-body w-100">
-												<span class="list-group-item-heading">Kristopher Candy
-
-                            </span>
-												<div class="list-unstyled users-list m-0 float-right">
-													<i className="la la-angle-right"></i>
+										{(data.transactions !== [])?
+											(data.transactions.length > 10 ? data.transactions.splice(0,10): data.transactions).map((txn)=>
+												<a href="/#" class="media border-0">
+												<div class="media-left pr-1">
+													<span class="avatar avatar-md avatar-online">
+														<img class="media-object rounded-circle" src={`theme-assets/images/portrait/small/avatar-s-${Math.floor(Math.random()* 26) + 1}.png`} alt="Generic placeholder" />
+														<i></i>
+													</span>
 												</div>
-												<p class="list-group-item-text mb-0">
-													<span class="blue-grey lighten-2 font-small-3"> -#12,000 </span>
-												</p>
-											</div>
-										</a>
-										<a href="/#" class="media border-0">
-											<div class="media-left pr-1">
-												<span class="avatar avatar-md avatar-away">
-													<img class="media-object rounded-circle" src="theme-assets/images/portrait/small/avatar-s-8.png" alt="Generic placeholder" />
-													<i></i>
-												</span>
-											</div>
-											<div class="media-body w-100">
-												<span class="list-group-item-heading">Lawrence Fowler
+												<div class="media-body w-100">
+													<span class="list-group-item-heading">{txn.receiverName}
 
-                            </span>
-												<div class="list-unstyled users-list m-0 float-right">
-													<i className="la la-angle-right"></i>
+															</span>
+													<div class="list-unstyled users-list m-0 float-right">
+														<i className="la la-angle-right"></i>
+													</div>
+													<p class="list-group-item-text mb-0">
+														<span class="blue-grey lighten-2 font-small-3"> {currencyFormat(txn.amountSent)} </span>
+													</p>
 												</div>
-												<p class="list-group-item-text mb-0">
-													<span class="blue-grey lighten-2 font-small-3"> -#12,000 </span>
-												</p>
-											</div>
-										</a>
-										<a href="/#" class="media border-0">
-											<div class="media-left pr-1">
-												<span class="avatar avatar-md avatar-busy">
-													<img class="media-object rounded-circle" src="theme-assets/images/portrait/small/avatar-s-9.png" alt="Generic placeholder" />
-													<i></i>
-												</span>
-											</div>
-											<div class="media-body w-100">
-												<span class="list-group-item-heading">Linda Olson
-
-                            </span>
-												<div class="list-unstyled users-list m-0 float-right">
-													<i className="la la-angle-right"></i>
-												</div>
-												<p class="list-group-item-text mb-0">
-													<span class="blue-grey lighten-2 font-small-3"> -#12,000 </span>
-												</p>
-											</div>
-										</a>
-										<a href="/#" class="media border-0">
-											<div class="media-left pr-1">
-												<span class="avatar avatar-md avatar-online">
-													<img class="media-object rounded-circle" src="theme-assets/images/portrait/small/avatar-s-10.png" alt="Generic placeholder" />
-													<i></i>
-												</span>
-											</div>
-											<div class="media-body w-100">
-												<span class="list-group-item-heading">Roy Clark
-
-                            </span>
-												<div class="list-unstyled users-list m-0 float-right">
-													<i className="la la-angle-right"></i>
-												</div>
-												<p class="list-group-item-text mb-0">
-													<span class="blue-grey lighten-2 font-small-3"> -#12,000 </span>
-												</p>
-											</div>
-										</a>
-										<a href="/#" class="media border-0">
-											<div class="media-left pr-1">
-												<span class="avatar avatar-md avatar-online">
-													<img class="media-object rounded-circle" src="theme-assets/images/portrait/small/avatar-s-11.png" alt="Generic placeholder" />
-													<i></i>
-												</span>
-											</div>
-											<div class="media-body w-100">
-												<span class="list-group-item-heading">Kristopher Candy
-
-                            </span>
-												<div class="list-unstyled users-list m-0 float-right">
-													<i className="la la-angle-right"></i>
-												</div>
-												<p class="list-group-item-text mb-0">
-													<span class="blue-grey lighten-2 font-small-3"> -#12,000 </span>
-												</p>
-											</div>
-										</a>
+											</a>
+											)
+										:
+											<p>You have not made any transactions yet.</p>
+										}
 									</div>
 								</div>
 							</div>
@@ -230,25 +246,28 @@ function Dashboard() {
 								</div>
 								<div class="card-content">
 									<div class="card-body">
-										<form class="form">
+										<form class="form" onSubmit={formSubmitHandler}>
 											<div class="form-body">
-												<div class="form-group">
+												<div className="pb-1 pl-2 pr-2 error-text">
+													<b><p className="text-left"></p></b>
+												</div>
+												<div class="form-group" style={{ marginBottom: "5px" }}>
 													<label for="account_number" class="sr-only">First Name</label>
-													<input type="text" id="account_number" class="form-control" placeholder="Account Number" name="account_number" />
+													<input type="text" id="account_number" class="form-control" placeholder="Account Number" name="receiverAccountNumber" value={state.receiverAccountNumber} onChange={fieldHandler} />
 												</div>
 												<div className="pb-2 pl-2 pr-2">
-													<p className="text-left account_name"></p>
+													<b><p className="text-left account_name"></p></b>
 												</div>
 												<div class="form-group">
-													<label for="transfer_amount" class="sr-only">Last Name</label>
-													<input type="number" id="transfer_amount" class="form-control" placeholder="Enter Amount" name="transfer_amount" disabled />
+													<label for="amount_sent" class="sr-only">Last Name</label>
+													<input type="number" id="amount_sent" class="form-control" placeholder="Enter Amount" name="amountSent" disabled value={state.amountSent} onChange={fieldHandler} />
 												</div>
 												<div class="form-group">
 													<label for="transfer_message" class="sr-only">Message</label>
-													<textarea id="transfer_message" rows="5" class="form-control square" name="transfer_message" placeholder="Message" disabled></textarea>
+													<textarea id="transfer_message" rows="5" class="form-control square" name="transferMessage" placeholder="Message" disabled value={state.transferMessage} onChange={fieldHandler}></textarea>
 												</div>
 												<div class="form-actions center">
-													<button type="submit" class="btn btn-outline-primary transfer-button" disabled>Send</button>
+													<button type="submit" class="btn btn-outline-primary transfer-button" >Send</button>
 												</div>
 											</div>
 										</form>
@@ -312,5 +331,22 @@ function Dashboard() {
 	)
 }
 
-export default Dashboard
+const arr = [
+	{
+		sendAccountNumber: 1234567890,
+		receiverAccountNumber: 1987654321,
+		receiverName: "Receiver's Name",
+		amountSent: 3000,
+		transferMessage: "Transfer Message"
+	},{
+		sendAccountNumber: 1111111111,
+		receiverAccountNumber: 100000000,
+		receiverName: "Receiver2's Name",
+		amountSent: 5000,
+		transferMessage: "Transfer Message2"
+	}
+]
+
+
+export default withRouter(Dashboard);
 

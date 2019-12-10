@@ -10,7 +10,6 @@ function Login(props) {
 	})
 	const { isLoggedIn, setIsLoggedIn } = useContext(authContext)
 	const { setUserInfo } = useContext(authContext)
-	console.log(isLoggedIn);
 
 	function fieldHandler(evt) {
 		const value = evt.target.value;
@@ -23,16 +22,13 @@ function Login(props) {
 	async function formSubmitHandler(evt) {
 		evt.preventDefault();
 		const result = await userLogin(state);
-		console.log(result);
 		if (result.statusCode === 200) {
 			localStorage.setItem("jwt", JSON.stringify({ id: result.payload._id, token: result.token }))
-			result.payload.balance = result.payload.balance.toFixed(2);
+			// result.payload.balance = result.payload.balance.toFixed(2);
 			result.payload.lastLogin = new Date(result.payload.lastLogin).toGMTString()
 			localStorage.setItem("user", JSON.stringify(result.payload))
-			console.log(isLoggedIn);
 			setIsLoggedIn(true)
 			setUserInfo(result.payload)
-			console.log(isLoggedIn);
 			props.history.push('/dashboard')
 		} else {
 			document.querySelector("#login-notice").style.display = "block";
@@ -74,8 +70,8 @@ function Login(props) {
 											<h6 class="card-subtitle text-muted">Login to User Dashboard</h6>
 										</div>
 										<div class="card-body">
-											<div id="login-notice" style={{ display: "none", borderRadius: "5px", border: "1px solid red", backgroundColor: "#ffe3e3", paddingTop: "10px", marginBottom: "1em" }}>
-												<p style={{ color: "red" }}>Invalid Email or Password!</p>
+											<div id="login-notice" class="error-text">
+												<p>Invalid Email or Password!</p>
 											</div>
 											<form class="form" onSubmit={formSubmitHandler}>
 												<div class="form-body">
