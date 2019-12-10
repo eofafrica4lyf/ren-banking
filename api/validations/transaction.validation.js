@@ -13,6 +13,8 @@ module.exports = {
 				.max(10)
 				.required(),
 			amountSent: Joi.number()
+				.required(),
+			transferMessage: Joi.string()
 				.required()
 		}
 	}
