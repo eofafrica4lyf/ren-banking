@@ -1,14 +1,95 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { authContext } from "../../context/authContext"
+import checkReceiverExists from '../../apiservice/checkReceiverExist'
+import transferMoney from '../../apiservice/transferMoney'
+import { withRouter } from 'react-router-dom';
 
-function Dashboard() {
+function Dashboard(props) {
+	const [state, setState] = useState({
+		senderAccountNumber: '',
+		receiverAccountNumber: '2325049177',
+		transferMessage: '',
+		amountSent: ''
+	})
 	const [data, setData] = useState({});
 	const { userInfo } = useContext(authContext)
-	console.log(userInfo);
+	// console.log(userInfo);
+
+	async function formSubmitHandler(evt) {
+		evt.preventDefault();
+		let token = '';
+		if (localStorage.jwt) {
+			token = JSON.parse(localStorage.getItem('jwt'))
+		}
+		console.log(token.token);
+		if (!document.querySelector("#amount_sent").disabled && !document.querySelector("#transfer_message").disabled) {
+			const result = await transferMoney({
+				senderAccountNumber: state.senderAccountNumber,
+				receiverAccountNumber: state.receiverAccountNumber,
+				token: token.token,
+				amountSent: state.amountSent,
+				transferMessage: state.transferMessage
+			})
+			console.log(result);
+			localStorage.setItem("user", JSON.stringify(result.payload));
+			props.history.push('/')
+			// return;
+		} else {
+			if (state.senderAccountNumber === state.receiverAccountNumber) {
+				document.querySelector(".error-text p").innerHTML = `You cannot send to yourself!`;
+				document.querySelector(".error-text").style.display = "block";
+				setTimeout(() => {
+					document.querySelector(".error-text").style.display = "none";
+					document.querySelector(".error-text p").innerHTML = ``;
+				}, 3000);
+				return;
+			}
+			const result = await checkReceiverExists({ senderAccountNumber: state.senderAccountNumber, receiverAccountNumber: state.receiverAccountNumber, token: token.token });
+			console.log(document.querySelector("#amount_sent").disabled);
+			if (result.payload) {
+				document.querySelector(".account_name").innerHTML = `${result.payload.firstName} ${result.payload.middleName} ${result.payload.lastName}`;
+				document.querySelector("#amount_sent").disabled = false;
+				document.querySelector("#transfer_message").disabled = false;
+				document.querySelector(".transfer-button").disabled = false;
+			} else {
+				document.querySelector("p.account_name").innerHTML = `Receiver not Found!`;
+			}
+		}
+
+	}
+
+	function fieldHandler(evt) {
+		const value = evt.target.value;
+		setState({
+			...state,
+			[evt.target.name]: value
+		});
+		console.log(evt.target.name, evt.target.value.length);
+
+		if (evt.target.name === "receiverAccountNumber") {
+			if (evt.target.value.length === 10) {
+				document.querySelector(".transfer-button").disabled = false;
+			} else {
+				document.querySelector(".transfer-button").disabled = true;
+			}
+		}
+	}
+
+	function currencyFormat(num) {
+		if (num != undefined && num !== "undefined" && num !== null && !isNaN(num)) {
+			console.log(num.toFixed(2));
+			return '#' + num.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+		}
+	}
 
 	useEffect(() => {
 		if (localStorage.user) {
-			setData(JSON.parse(localStorage.user))
+			const data = JSON.parse(localStorage.user)
+			setData(data)
+			setState({
+				...state,
+				senderAccountNumber: data.accountNumber
+			})
 		}
 		console.log(data);
 		// eslint-disable-next-line
@@ -40,7 +121,7 @@ function Dashboard() {
 									<div class="progress-stats-container ct-golden-section height-75 position-relative pt-3  ">
 										{/* <div id="progress-stats-bar-chart"></div> */}
 										<div className="available-balance">
-											<h1>{`# ${data.balance}`}</h1>
+											<h1>{`${currencyFormat(data.balance)}`}</h1>
 										</div>
 										<div id="progress-stats-line-chart" class="progress-stats-shadow"></div>
 									</div>
@@ -231,25 +312,28 @@ function Dashboard() {
 								</div>
 								<div class="card-content">
 									<div class="card-body">
-										<form class="form">
+										<form class="form" onSubmit={formSubmitHandler}>
 											<div class="form-body">
-												<div class="form-group">
+												<div className="pb-1 pl-2 pr-2 error-text">
+													<b><p className="text-left"></p></b>
+												</div>
+												<div class="form-group" style={{ marginBottom: "5px" }}>
 													<label for="account_number" class="sr-only">First Name</label>
-													<input type="text" id="account_number" class="form-control" placeholder="Account Number" name="account_number" />
+													<input type="text" id="account_number" class="form-control" placeholder="Account Number" name="receiverAccountNumber" value={state.receiverAccountNumber} onChange={fieldHandler} />
 												</div>
 												<div className="pb-2 pl-2 pr-2">
-													<p className="text-left account_name"></p>
+													<b><p className="text-left account_name"></p></b>
 												</div>
 												<div class="form-group">
-													<label for="transfer_amount" class="sr-only">Last Name</label>
-													<input type="number" id="transfer_amount" class="form-control" placeholder="Enter Amount" name="transfer_amount" disabled />
+													<label for="amount_sent" class="sr-only">Last Name</label>
+													<input type="number" id="amount_sent" class="form-control" placeholder="Enter Amount" name="amountSent" disabled value={state.amountSent} onChange={fieldHandler} />
 												</div>
 												<div class="form-group">
 													<label for="transfer_message" class="sr-only">Message</label>
-													<textarea id="transfer_message" rows="5" class="form-control square" name="transfer_message" placeholder="Message" disabled></textarea>
+													<textarea id="transfer_message" rows="5" class="form-control square" name="transferMessage" placeholder="Message" disabled value={state.transferMessage} onChange={fieldHandler}></textarea>
 												</div>
 												<div class="form-actions center">
-													<button type="submit" class="btn btn-outline-primary transfer-button" disabled>Send</button>
+													<button type="submit" class="btn btn-outline-primary transfer-button" >Send</button>
 												</div>
 											</div>
 										</form>
@@ -313,5 +397,5 @@ function Dashboard() {
 	)
 }
 
-export default Dashboard
+export default withRouter(Dashboard);
 
