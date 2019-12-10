@@ -12,10 +12,12 @@ module.exports = {
 				.min(10)
 				.max(10)
 				.required(),
+			receiverName: Joi.string(),
 			amountSent: Joi.number()
 				.required(),
 			transferMessage: Joi.string()
-				.required()
+				.required(),
+			_sender: Joi.string()
 		}
 	}
 };

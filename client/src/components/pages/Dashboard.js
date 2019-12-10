@@ -7,13 +7,12 @@ import { withRouter } from 'react-router-dom';
 function Dashboard(props) {
 	const [state, setState] = useState({
 		senderAccountNumber: '',
-		receiverAccountNumber: '2325049177',
+		receiverAccountNumber: '2762203380',
 		transferMessage: '',
 		amountSent: ''
 	})
-	const [data, setData] = useState({});
+	const [data, setData] = useState(JSON.parse(localStorage.user));
 	const { userInfo } = useContext(authContext)
-	// console.log(userInfo);
 
 	async function formSubmitHandler(evt) {
 		evt.preventDefault();
@@ -21,7 +20,7 @@ function Dashboard(props) {
 		if (localStorage.jwt) {
 			token = JSON.parse(localStorage.getItem('jwt'))
 		}
-		console.log(token.token);
+
 		if (!document.querySelector("#amount_sent").disabled && !document.querySelector("#transfer_message").disabled) {
 			const result = await transferMoney({
 				senderAccountNumber: state.senderAccountNumber,
@@ -30,10 +29,14 @@ function Dashboard(props) {
 				amountSent: state.amountSent,
 				transferMessage: state.transferMessage
 			})
-			console.log(result);
+
+			result.payload.lastLogin = new Date(result.payload.lastLogin).toGMTString()
 			localStorage.setItem("user", JSON.stringify(result.payload));
+
+			setData(result.payload)
+
 			props.history.push('/')
-			// return;
+			return;
 		} else {
 			if (state.senderAccountNumber === state.receiverAccountNumber) {
 				document.querySelector(".error-text p").innerHTML = `You cannot send to yourself!`;
@@ -44,8 +47,12 @@ function Dashboard(props) {
 				}, 3000);
 				return;
 			}
-			const result = await checkReceiverExists({ senderAccountNumber: state.senderAccountNumber, receiverAccountNumber: state.receiverAccountNumber, token: token.token });
-			console.log(document.querySelector("#amount_sent").disabled);
+			const result = await checkReceiverExists({ 
+				senderAccountNumber: state.senderAccountNumber, 
+				receiverAccountNumber: state.receiverAccountNumber, 
+				token: token.token 
+			});
+
 			if (result.payload) {
 				document.querySelector(".account_name").innerHTML = `${result.payload.firstName} ${result.payload.middleName} ${result.payload.lastName}`;
 				document.querySelector("#amount_sent").disabled = false;
@@ -54,8 +61,8 @@ function Dashboard(props) {
 			} else {
 				document.querySelector("p.account_name").innerHTML = `Receiver not Found!`;
 			}
+			return;
 		}
-
 	}
 
 	function fieldHandler(evt) {
@@ -64,7 +71,6 @@ function Dashboard(props) {
 			...state,
 			[evt.target.name]: value
 		});
-		console.log(evt.target.name, evt.target.value.length);
 
 		if (evt.target.name === "receiverAccountNumber") {
 			if (evt.target.value.length === 10) {
@@ -76,22 +82,20 @@ function Dashboard(props) {
 	}
 
 	function currencyFormat(num) {
-		if (num != undefined && num !== "undefined" && num !== null && !isNaN(num)) {
-			console.log(num.toFixed(2));
+		if (num !== undefined && num !== "undefined" && num !== null && !isNaN(num)) {
 			return '#' + num.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
 		}
 	}
 
 	useEffect(() => {
 		if (localStorage.user) {
-			const data = JSON.parse(localStorage.user)
-			setData(data)
+			const user = JSON.parse(localStorage.user)
+			setData(user)
 			setState({
 				...state,
 				senderAccountNumber: data.accountNumber
 			})
 		}
-		console.log(data);
 		// eslint-disable-next-line
 	}, [setData])
 
@@ -191,101 +195,31 @@ function Dashboard(props) {
 								</div>
 								<div class="card-content">
 									<div id="recent-buyers" class="media-list">
-										<a href="/#" class="media border-0">
-											<div class="media-left pr-1">
-												<span class="avatar avatar-md avatar-online">
-													<img class="media-object rounded-circle" src="theme-assets/images/portrait/small/avatar-s-7.png" alt="Generic placeholder" />
-													<i></i>
-												</span>
-											</div>
-											<div class="media-body w-100">
-												<span class="list-group-item-heading">Kristopher Candy
-
-                            </span>
-												<div class="list-unstyled users-list m-0 float-right">
-													<i className="la la-angle-right"></i>
+										{(data.transactions !== [])?
+											(data.transactions.length > 10 ? data.transactions.splice(0,10): data.transactions).map((txn)=>
+												<a href="/#" class="media border-0">
+												<div class="media-left pr-1">
+													<span class="avatar avatar-md avatar-online">
+														<img class="media-object rounded-circle" src={`theme-assets/images/portrait/small/avatar-s-${Math.floor(Math.random()* 26) + 1}.png`} alt="Generic placeholder" />
+														<i></i>
+													</span>
 												</div>
-												<p class="list-group-item-text mb-0">
-													<span class="blue-grey lighten-2 font-small-3"> -#12,000 </span>
-												</p>
-											</div>
-										</a>
-										<a href="/#" class="media border-0">
-											<div class="media-left pr-1">
-												<span class="avatar avatar-md avatar-away">
-													<img class="media-object rounded-circle" src="theme-assets/images/portrait/small/avatar-s-8.png" alt="Generic placeholder" />
-													<i></i>
-												</span>
-											</div>
-											<div class="media-body w-100">
-												<span class="list-group-item-heading">Lawrence Fowler
+												<div class="media-body w-100">
+													<span class="list-group-item-heading">{txn.receiverName}
 
-                            </span>
-												<div class="list-unstyled users-list m-0 float-right">
-													<i className="la la-angle-right"></i>
+															</span>
+													<div class="list-unstyled users-list m-0 float-right">
+														<i className="la la-angle-right"></i>
+													</div>
+													<p class="list-group-item-text mb-0">
+														<span class="blue-grey lighten-2 font-small-3"> {currencyFormat(txn.amountSent)} </span>
+													</p>
 												</div>
-												<p class="list-group-item-text mb-0">
-													<span class="blue-grey lighten-2 font-small-3"> -#12,000 </span>
-												</p>
-											</div>
-										</a>
-										<a href="/#" class="media border-0">
-											<div class="media-left pr-1">
-												<span class="avatar avatar-md avatar-busy">
-													<img class="media-object rounded-circle" src="theme-assets/images/portrait/small/avatar-s-9.png" alt="Generic placeholder" />
-													<i></i>
-												</span>
-											</div>
-											<div class="media-body w-100">
-												<span class="list-group-item-heading">Linda Olson
-
-                            </span>
-												<div class="list-unstyled users-list m-0 float-right">
-													<i className="la la-angle-right"></i>
-												</div>
-												<p class="list-group-item-text mb-0">
-													<span class="blue-grey lighten-2 font-small-3"> -#12,000 </span>
-												</p>
-											</div>
-										</a>
-										<a href="/#" class="media border-0">
-											<div class="media-left pr-1">
-												<span class="avatar avatar-md avatar-online">
-													<img class="media-object rounded-circle" src="theme-assets/images/portrait/small/avatar-s-10.png" alt="Generic placeholder" />
-													<i></i>
-												</span>
-											</div>
-											<div class="media-body w-100">
-												<span class="list-group-item-heading">Roy Clark
-
-                            </span>
-												<div class="list-unstyled users-list m-0 float-right">
-													<i className="la la-angle-right"></i>
-												</div>
-												<p class="list-group-item-text mb-0">
-													<span class="blue-grey lighten-2 font-small-3"> -#12,000 </span>
-												</p>
-											</div>
-										</a>
-										<a href="/#" class="media border-0">
-											<div class="media-left pr-1">
-												<span class="avatar avatar-md avatar-online">
-													<img class="media-object rounded-circle" src="theme-assets/images/portrait/small/avatar-s-11.png" alt="Generic placeholder" />
-													<i></i>
-												</span>
-											</div>
-											<div class="media-body w-100">
-												<span class="list-group-item-heading">Kristopher Candy
-
-                            </span>
-												<div class="list-unstyled users-list m-0 float-right">
-													<i className="la la-angle-right"></i>
-												</div>
-												<p class="list-group-item-text mb-0">
-													<span class="blue-grey lighten-2 font-small-3"> -#12,000 </span>
-												</p>
-											</div>
-										</a>
+											</a>
+											)
+										:
+											<p>You have not made any transactions yet.</p>
+										}
 									</div>
 								</div>
 							</div>
@@ -396,6 +330,23 @@ function Dashboard(props) {
 		</div>
 	)
 }
+
+const arr = [
+	{
+		sendAccountNumber: 1234567890,
+		receiverAccountNumber: 1987654321,
+		receiverName: "Receiver's Name",
+		amountSent: 3000,
+		transferMessage: "Transfer Message"
+	},{
+		sendAccountNumber: 1111111111,
+		receiverAccountNumber: 100000000,
+		receiverName: "Receiver2's Name",
+		amountSent: 5000,
+		transferMessage: "Transfer Message2"
+	}
+]
+
 
 export default withRouter(Dashboard);
 

@@ -3,14 +3,14 @@ const sendResponse = require('../../helpers/response');
 const { UserQuery, TransactionQuery } = require('../queries/queries');
 const mongoose = require('../../config/mongo-database');
 const User = require("../models/User");
+const Transaction = require("../models/Transaction");
 
 const TransactionController = () => {
 
 	const checkReceiver = async (req, res, next) => {
 		try {
-			const { senderAccountNumber, receiverAccountNumber } = req.body;
+			const { receiverAccountNumber } = req.body;
 			const receiver = await UserQuery.findByAccountNumber(receiverAccountNumber);
-			console.log(req.body);
 
 			if (receiver) {
 				const { firstName, middleName, lastName } = receiver;
@@ -25,14 +25,10 @@ const TransactionController = () => {
 
 	const send = async (req, res, next) => {
 		try {
-			console.log(req.body);
-
 			const { senderAccountNumber, receiverAccountNumber, amountSent, transferMessage } = req.body;
 
 			const receiver = await UserQuery.findByAccountNumber(receiverAccountNumber);
 			const sender = await UserQuery.findByAccountNumber(senderAccountNumber);
-			console.log(receiver);
-			console.log(sender);
 			if (sender.balance < amountSent) {
 				return res.json(sendResponse(httpStatus.OK, 'failure', { message: "You do not have enough balance!" }, null));
 			}
@@ -40,8 +36,9 @@ const TransactionController = () => {
 			receiver.balance = receiver.balance + amountSent;
 			delete sender.password;
 			delete receiver.password;
-			console.log(sender.balance, receiver.balance);
 
+			const c = await UserQuery.findByAccountNumber(senderAccountNumber);
+			
 			//Run a transaction
 			let session = null;
 			return User.createCollection().
@@ -63,7 +60,35 @@ const TransactionController = () => {
 					)
 				}).
 				then(() => session.commitTransaction()).
-				then(()=> res.json(sendResponse(httpStatus.OK, 'success', sender, null)))
+				then(() => {
+					let newTxn = new Transaction({
+						senderAccountNumber: sender.accountNumber,
+						receiverAccountNumber: receiver.accountNumber,
+						receiverName: `${receiver.firstName} ${receiver.lastName}`,
+						_sender: sender._id,
+						amountSent,
+						transferMessage
+					})
+					sender.transactions.push(newTxn._id)
+					sender.save();
+					return newTxn.save()
+					// TransactionQuery.create({
+					// 	senderAccountNumber: sender.accountNumber,
+					// 	receiverAccountNumber: receiver.accountNumber,
+					// 	receiverName: `${receiver.firstName} ${receiver.lastName}`,
+					// 	_sender: sender._id,
+					// 	amountSent,
+					// 	transferMessage
+					// })
+				}).
+				then(()=>{
+					return User.findOne({accountNumber: senderAccountNumber}).populate('transactions')
+				}).
+				then(response => {
+					updatedSender = response;
+					return;
+				}).
+				then(()=> res.json(sendResponse(httpStatus.OK, 'success', updatedSender, null)))
 		} catch (err) {
 			next(err);
 		}
