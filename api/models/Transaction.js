@@ -5,13 +5,21 @@ const transactionSchema = new mongoose.Schema({
 		type: String,
 		required: true,
 		minlength: 10,
-		maxlength: 10,
+		maxlength: 10
 	},
 	receiverAccountNumber: {
 		type: String,
 		required: true,
 		minlength: 10,
 		maxlength: 10,
+	},
+	receiverName: {
+		type: String,
+		required: true
+	},
+	_sender: { 
+		type: mongoose.Schema.Types.ObjectId, 
+		ref: 'User' 
 	},
 	amountSent: {
 		type: Number,

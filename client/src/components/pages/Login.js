@@ -10,7 +10,6 @@ function Login(props) {
 	})
 	const { isLoggedIn, setIsLoggedIn } = useContext(authContext)
 	const { setUserInfo } = useContext(authContext)
-	console.log(isLoggedIn);
 
 	function fieldHandler(evt) {
 		const value = evt.target.value;
@@ -23,16 +22,13 @@ function Login(props) {
 	async function formSubmitHandler(evt) {
 		evt.preventDefault();
 		const result = await userLogin(state);
-		console.log(result);
 		if (result.statusCode === 200) {
 			localStorage.setItem("jwt", JSON.stringify({ id: result.payload._id, token: result.token }))
 			// result.payload.balance = result.payload.balance.toFixed(2);
 			result.payload.lastLogin = new Date(result.payload.lastLogin).toGMTString()
 			localStorage.setItem("user", JSON.stringify(result.payload))
-			console.log(isLoggedIn);
 			setIsLoggedIn(true)
 			setUserInfo(result.payload)
-			console.log(isLoggedIn);
 			props.history.push('/dashboard')
 		} else {
 			document.querySelector("#login-notice").style.display = "block";
