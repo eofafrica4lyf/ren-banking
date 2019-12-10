@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "set NODE_ENV=development && nodemon ./api/api.js",
-    "run": "npm run start",
+    "start": "node ./api/api.js",
+    "dev": "nodemon",
     "test": "jest --coverage --runInBand --detectOpenHandles --forceExit"
   },
   "dependencies": {
@@ -37,6 +37,9 @@
     "eslint": "^6.3.0",
     "jest": "^24.9.0",
     "nodemon": "^1.19.2",
-    "supertest": "^4.0.2"
+    "supertest": "^4.0.2",
+    "uglify-js": "^2.6.0",
+    "constantinople": "^4.0.1",
+    "clean-css": "^4.2.1"
   }
 }
