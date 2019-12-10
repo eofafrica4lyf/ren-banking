@@ -4,9 +4,13 @@ const transactionValidation = require('../../api/validations/transaction.validat
 
 
 const privateRoutes = {
+	'POST /transaction/checkReceiver': {
+		path: 'TransactionController.checkReceiver'
+	},
+
 	'POST /transaction/send': {
 		path: 'TransactionController.send',
-		middlewares: [validate(transactionValidation.createTransaction), Auth]
+		middlewares: [validate(transactionValidation.createTransaction)]
 	}
 
 };

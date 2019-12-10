@@ -15,10 +15,13 @@ class Queries {
 	findAll() {
 		return this.Model.find();
 	}
-	
 
-	findByIdOrFixtureUrl(id){
-		return this.Model.findOne().or([{url: new RegExp(id)},{_id: id}])
+	findByAccountNumber(accountNumber) {
+		return this.Model.findOne({ accountNumber })
+	}
+
+	findByIdOrFixtureUrl(id) {
+		return this.Model.findOne().or([{ url: new RegExp(id) }, { _id: id }])
 	}
 
 	findByHomeTeam(homeTeam) {
