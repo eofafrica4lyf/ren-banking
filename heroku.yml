@@ -1,0 +1,5 @@
+build:
+	docker:
+		server: server/Dockerfile
+		client: client/Dockerfile
+		nginx: nginx/Dockerfile
