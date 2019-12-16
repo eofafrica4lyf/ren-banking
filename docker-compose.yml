@@ -6,6 +6,7 @@ services:
       context: ./server
     environment:
       - MONGO_URI=mongodb+srv://emm:emm@cluster0-9jokw.gcp.mongodb.net/ren-banking?retryWrites=true&w=majority
+      - NODE_ENV=production
     volumes:
       - /app/node_modules
       - ./server:/app
