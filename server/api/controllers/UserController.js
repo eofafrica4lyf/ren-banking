@@ -59,6 +59,7 @@ const UserController = () => {
 			console.log("Oh yeah!!!")
 
 			const user = await await User.findOne({email}).populate('transactions');
+			console.log(user);
 			
 			if (!user) {
 				return res.json(
