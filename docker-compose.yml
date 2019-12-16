@@ -4,6 +4,8 @@ services:
     build:
       dockerfile: Dockerfile
       context: ./server
+    environment:
+      - MONGO_URI=mongodb+srv://emm:emm@cluster0-9jokw.gcp.mongodb.net/ren-banking?retryWrites=true&w=majority
     volumes:
       - /app/node_modules
       - ./server:/app
