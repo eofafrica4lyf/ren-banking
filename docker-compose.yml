@@ -22,6 +22,9 @@ services:
     restart: always
     build:
       dockerfile: Dockerfile
-      context: ./nginx
+			context: ./nginx
+		depends_on:
+			- 'client'
+			- 'api'
     ports:
       - '3050:80'
