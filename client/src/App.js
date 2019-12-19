@@ -2,6 +2,7 @@ import React, { useEffect, useContext } from 'react'
 import {
 	BrowserRouter as Router,
 	Switch,
+	Link,
 	Route,
 	Redirect,
 	useHistory,
@@ -168,9 +169,9 @@ function LoginPage() {
 				<PublicHeader />
 				<Login />
 				<div>
-					<a href="/register">
+					<Link to="/register">
 						<p>New to the App? Register</p>
-					</a>
+					</Link>
 				</div>
 			</div>
 		</>
@@ -184,9 +185,9 @@ function RegisterPage() {
 				<PublicHeader />
 				<Register />
 				<div>
-					<a href="/login">
+					<Link to="/login">
 						<p>Not new? Login</p>
-					</a>
+					</Link>
 				</div>
 			</div>
 		</>
