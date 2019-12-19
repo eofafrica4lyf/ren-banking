@@ -67,7 +67,7 @@ app.use(error.notFound);
 app.use(error.handler);
 
 
-server.listen(config.port, () => {
+server.listen(5000 || config.port, () => {
   if (environment !== 'production' && environment !== 'development' && environment !== 'testing') {
     // eslint-disable-next-line no-console
     console.error(
