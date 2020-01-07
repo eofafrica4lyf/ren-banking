@@ -1,3 +1,5 @@
+http://167.71.80.20
+
 ### A Mini core banking application with the following features:
 
 1. Account management (ability to open and close accounts)
